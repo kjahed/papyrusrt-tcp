@@ -528,6 +528,8 @@ void * UMLRTController::run ( void * args )
 {
     printf("Controller \"%s\" running.\n", name());
 
+    tcpService.spawn();
+
     if (slots == NULL)
     {
         numSlots = UMLRTCapsuleToControllerMap::getDefaultSlotList( &slots );

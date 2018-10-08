@@ -40,7 +40,6 @@ void UMLRTTCPService::connekt ( const UMLRTCommsPort * port, const char* host, i
 	int sock = getSocket(port);
 	if(sock == -1) {
 		sock = socket(AF_INET, SOCK_STREAM, 0);
-		printf("Socket init: %d\n", sock);
 		getPortSocketMap()->insert(port, (void *)new int(sock));
 	}
 
@@ -52,7 +51,7 @@ void UMLRTTCPService::connekt ( const UMLRTCommsPort * port, const char* host, i
 	if(inet_pton(AF_INET, host, &addr.sin_addr) <= 0)
 	{
 		UMLRTOutSignal signal;
-		signal.initialize( "error", UMLRTTCPProtocol::signal_error, port, &UMLRTTCPProtocol::payload_error, new int(0));
+		signal.initialize( "error", UMLRTTCPProtocol::signal_error, port, &UMLRTTCPProtocol::payload_error, &errno);
 		port->slot->controller->deliver( port, signal, port->roleIndex );
 		return;
 	}
@@ -60,14 +59,10 @@ void UMLRTTCPService::connekt ( const UMLRTCommsPort * port, const char* host, i
     UMLRTOutSignal signal;
 	int ret = connect(sock, (struct sockaddr *)&addr, sizeof(addr));
 	if( ret < 0 )
-		signal.initialize( "error", UMLRTTCPProtocol::signal_error, port, &UMLRTTCPProtocol::payload_error, new int(0));
+		signal.initialize( "error", UMLRTTCPProtocol::signal_error, port, &UMLRTTCPProtocol::payload_error, &errno);
 	else
 		signal.initialize( "connected", UMLRTTCPProtocol::signal_connected, port, &UMLRTTCPProtocol::payload_connected);
-	//signal.send();
-
 	port->slot->controller->deliver( port, signal, port->roleIndex );
-
-	printf("Connect return %d\n", ret);
 }
 
 void UMLRTTCPService::disconnect ( const UMLRTCommsPort * port )
@@ -77,7 +72,7 @@ void UMLRTTCPService::disconnect ( const UMLRTCommsPort * port )
 		UMLRTOutSignal signal;
 
 		if (close(socket) < 0) {
-		    signal.initialize( "error", UMLRTTCPProtocol::signal_error, port, &UMLRTTCPProtocol::payload_error, new int(0));
+		    signal.initialize( "error", UMLRTTCPProtocol::signal_error, port, &UMLRTTCPProtocol::payload_error, &errno);
 		}
 		else {
 			signal.initialize( "disconnected", UMLRTTCPProtocol::signal_disconnected, port, &UMLRTTCPProtocol::payload_disconnected);
@@ -87,29 +82,43 @@ void UMLRTTCPService::disconnect ( const UMLRTCommsPort * port )
 	}
 }
 
-void UMLRTTCPService::send ( const UMLRTCommsPort * port, const char* msg, int size )
+void UMLRTTCPService::send ( const UMLRTCommsPort * port, char * payload, int length )
 {
 	UMLRTTCPService::Message * message = new UMLRTTCPService::Message;
 	message->port = port;
-	message->msg = msg;
-	message->size = size;
+	message->length = length;
+	message->payload = payload;
 	outQueue.enqueue(message);
+}
+
+void UMLRTTCPService::send ( const UMLRTCommsPort * port, const char* msg )
+{
+	UMLRTTCPService::Message * message = new UMLRTTCPService::Message;
+	message->port = port;
+	message->length = strlen(msg);
+	message->payload = (char*)msg;
+	outQueue.enqueue(message);
+}
+
+void UMLRTTCPService::spawn ( )
+{
+    start(NULL);
 }
 
 // Main loop
 void * UMLRTTCPService::run ( void * args )
 {
-    printf("TCP service running.\n");
-
     while(1) {
     	UMLRTTCPService::Message* msg;
 		while((msg = (UMLRTTCPService::Message*) outQueue.dequeue()) != NULL) {
 			int socket = getSocket(msg->port);
-			int ret = write(socket, msg->msg, msg->size);
+			if(socket == -1)
+				FATAL("TCP socket not found for port %s", msg->port->getName());
+			int ret = write(socket, msg->payload, msg->length);
 			if (ret  < 0 )
 			{
 				UMLRTOutSignal signal;
-				signal.initialize( "error", UMLRTTCPProtocol::signal_error, msg->port, &UMLRTTCPProtocol::payload_error, new int(0));
+				signal.initialize( "error", UMLRTTCPProtocol::signal_error, msg->port, &UMLRTTCPProtocol::payload_error, &errno);
 				msg->port->slot->controller->deliver( msg->port, signal, msg->port->roleIndex );
 			}
 		}
@@ -121,20 +130,25 @@ void * UMLRTTCPService::run ( void * args )
 		{
 			const UMLRTCommsPort * port = (UMLRTCommsPort *) clIter.getKey();
 			int socket = *((int*) clIter.getObject());
-			char* buffer = new char[TCP_BUFFER_SIZE];
+			static char* buffer = new char[TCP_BUFFER_SIZE];
 
 			int bytes = recv(socket, buffer, TCP_BUFFER_SIZE, MSG_DONTWAIT);
 			if(bytes > 0) {
+				char* payload = new char[bytes];
+				memcpy(payload, buffer, bytes);
+
 				UMLRTOutSignal signal;
-				signal.initialize( "received", UMLRTTCPProtocol::signal_received, port, &UMLRTTCPProtocol::payload_received, &buffer, &bytes);
+				signal.initialize( "received", UMLRTTCPProtocol::signal_received, port, &UMLRTTCPProtocol::payload_received, &payload, &bytes);
 				port->slot->controller->deliver( port, signal, port->roleIndex );
-			} else {
-				delete buffer;
+
+				delete payload;
 			}
 
 			clIter = clIter.next();
 		}
 
 		getPortSocketMap()->unlock();
+
+		usleep(100000);
     }
 }

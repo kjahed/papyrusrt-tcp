@@ -5,16 +5,16 @@
 UMLRTObject_field UMLRTTCPProtocol::fields_received[] =
 {
     {
-        "message",
+        "payload",
         &UMLRTType_charptr,
-        offsetof( params_received, message ),
+        offsetof( params_received, payload ),
         1,
         0
     },
     {
-        "size",
+        "length",
         &UMLRTType_int,
-        offsetof( params_received, size ),
+        offsetof( params_received, length ),
         1,
         0
     }

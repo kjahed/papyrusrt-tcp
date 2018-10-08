@@ -79,10 +79,10 @@ NOTE: This is an abstract protocol that is only meant to be inherited. Ports MUS
       </packagedElement>
       <packagedElement xmi:type="uml:Interface" xmi:id="_tEiNtK1CEeeZPMea3Z4z9w" name="TCP">
         <ownedOperation xmi:type="uml:Operation" xmi:id="_zwtv0K1YEee74Ow6RXIGBA" name="received" visibility="public">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_Dhm2cK3tEee74Ow6RXIGBA" name="message">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_Dhm2cK3tEee74Ow6RXIGBA" name="payload">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_orYEkMaTEeizMZc73oBW0g" name="size">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_orYEkMaTEeizMZc73oBW0g" name="length">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
           </ownedParameter>
         </ownedOperation>

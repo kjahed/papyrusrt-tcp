@@ -18,31 +18,30 @@ class UMLRTTCPService : UMLRTBasicThread
 public:
 	UMLRTTCPService ( ) : UMLRTBasicThread("UMLRTTCPService")
 	{
-		start(NULL);
 	}
     
     class Message : public UMLRTQueueElement {
 	public:
 		const UMLRTCommsPort * port;
-		const char* msg;
-		int size;
+		char * payload;
+		int length;
     };
 
-    static void connekt ( const UMLRTCommsPort * port, const char* host, int tcpPort );
-    static void disconnect ( const UMLRTCommsPort * port );
-    static void send ( const UMLRTCommsPort * port, const char* msg, int size );
-    static void queueMessage ( UMLRTTCPService::Message * msg );
+    void spawn ( );
 
+    static void connekt ( const UMLRTCommsPort * port, const char * host, int tcpPort );
+    static void disconnect ( const UMLRTCommsPort * port );
+    static void send ( const UMLRTCommsPort * port, char * payload, int length );
+    static void send ( const UMLRTCommsPort * port, const char * msg );
+    static void queueMessage ( UMLRTTCPService::Message * msg );
 private:
     virtual void * run ( void * args );
 
     static UMLRTQueue outQueue;
+    static UMLRTHashMap * portSocketMap;
 
     static int getSocket ( const UMLRTCommsPort * port );
     static UMLRTHashMap * getPortSocketMap ( );
-
-    static UMLRTHashMap * portSocketMap;
-
 };
 
 #endif // UMLRTTCPSERVICE_HH

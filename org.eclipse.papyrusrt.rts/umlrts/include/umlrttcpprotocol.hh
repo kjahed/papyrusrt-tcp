@@ -20,8 +20,8 @@ public:
 
     struct params_received
     {
-        char * message;
-        int size;
+        char * payload;
+        int length;
     };
 
     static UMLRTObject_field fields_received[];
@@ -45,9 +45,10 @@ public:
     class OutSignals {
     public:
         
-        const void connect( const char * address ) const;
+        const void connect( const char * host, int port ) const;
         const void disconnect( ) const;
-        const void send( const char* message, int size ) const;
+        const void send( char * payload, int length ) const;
+        const void send( const char * msg ) const;
     };
 
     typedef OutSignals Base;
@@ -69,9 +70,14 @@ public:
     	UMLRTTCPService::disconnect(srcPort);
     }
 
-    const void send( const char* message, int size ) const
+    const void send( char * payload, int length ) const
     {
-    	UMLRTTCPService::send(srcPort, message, size);
+    	UMLRTTCPService::send(srcPort, payload, length);
+    }
+
+    const void send( const char * msg) const
+    {
+    	UMLRTTCPService::send(srcPort, msg);
     }
 };
 
