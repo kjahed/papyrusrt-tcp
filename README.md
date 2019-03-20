@@ -3,6 +3,7 @@ This repository conains an extension to Papyrus-RT to add TCP/IP support. The ex
 
 ### Installation
 The extension can be easily installed via the Eclipse update site https://papyrusrt.jahed.ca/tcp
+
 Make sure to re-build the RTS after installing the extension.
 
 ### Usage
