@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/ca.jahed.papyrusrt.tcp.codegen-feature_1.0.0.201903201525.jar" id="ca.jahed.papyrusrt.tcp.codegen-feature" version="1.0.0.201903201525" patch="true">
+      <category name="tcp"/>
+   </feature>
+   <feature url="features/ca.jahed.papyrusrt.tcp.rts-feature_1.0.0.201903201525.jar" id="ca.jahed.papyrusrt.tcp.rts-feature" version="1.0.0.201903201525" patch="true">
+      <category name="tcp"/>
+   </feature>
+   <feature url="features/ca.jahed.papyrusrt.tcp.umlrt.common-feature_1.0.0.201903201525.jar" id="ca.jahed.papyrusrt.tcp.umlrt.common-feature" version="1.0.0.201903201525" patch="true">
+      <category name="tcp"/>
+   </feature>
+   <category-def name="tcp" label="TCP Support"/>
+</site>

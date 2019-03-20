@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ca.jahed.papyrusrt.tcp.codegen-feature"
+      label="Code Generator Support"
+      version="1.0.0.qualifier"
+      provider-name="Queen&apos;s University">
+
+   <requires>
+      <import feature="org.eclipse.papyrusrt.codegen-feature" version="1.0.0.201707181457" patch="true"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.papyrusrt.codegen.cpp.rts"
+         download-size="0"
+         install-size="0"
+         version="1.0.0.qualifier"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.papyrusrt.xtumlrt.external"
+         download-size="0"
+         install-size="0"
+         version="1.0.0.qualifier"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.papyrusrt.rts"
+         download-size="0"
+         install-size="0"
+         version="1.0.0.qualifier"/>
+
+</feature>
