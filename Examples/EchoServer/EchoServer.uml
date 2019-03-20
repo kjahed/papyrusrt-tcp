@@ -145,7 +145,7 @@ log.log(&quot;[ClientHandler %d] started&quot;, this->getIndex());</body>
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_bp20wErGEemYMPTFl57GsA" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.log(&quot;[ClientHandler %d] received message '%s'&quot;, this->getIndex(), payload);
-tcp.send(payload);</body>
+tcp.send(strndup(payload, length));</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_VDHxUErGEemYMPTFl57GsA" port="_yaI2AErDEemYMPTFl57GsA">
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_zwyoUK1YEee74Ow6RXIGBA"/>
